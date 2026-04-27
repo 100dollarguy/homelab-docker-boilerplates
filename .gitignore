@@ -1,0 +1,21 @@
+# Secrets — never commit
+**/.env
+
+# macOS
+**/.DS_Store
+
+# Runtime data — ignore contents, preserve empty dirs via .gitkeep
+**/data/*
+!**/data/.gitkeep
+**/postgres/*
+!**/postgres/.gitkeep
+**/redis/*
+!**/redis/.gitkeep
+**/grafana/*
+!**/grafana/.gitkeep
+**/prometheus/*
+!**/prometheus/prometheus.yml
+**/alertmanager/*
+!**/alertmanager/alertmanager.yml
+**/letsencrypt/*
+!**/letsencrypt/.gitkeep

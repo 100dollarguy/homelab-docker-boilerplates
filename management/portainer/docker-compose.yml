@@ -1,0 +1,21 @@
+services:
+
+  portainer:
+    image: ${IMAGE}
+    container_name: ${CONTAINER_NAME}
+
+    restart: unless-stopped
+
+    ports:
+      - "${PORT}:9000"
+
+    volumes:
+      - ./data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - ${NETWORK}
+
+networks:
+  ${NETWORK}:
+    external: true

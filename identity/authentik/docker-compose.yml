@@ -1,0 +1,80 @@
+services:
+
+  postgresql:
+    image: ${POSTGRES_IMAGE}
+    container_name: authentik-postgresql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PG_DB}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASS}
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${PG_DB} -U ${PG_USER}"]
+      start_period: 20s
+      interval: 30s
+      retries: 5
+      timeout: 5s
+    networks:
+      - internal
+
+  redis:
+    image: ${REDIS_IMAGE}
+    container_name: authentik-redis
+    restart: unless-stopped
+    command: --save 60 1 --loglevel warning
+    volumes:
+      - ./redis:/data
+    networks:
+      - internal
+
+  server:
+    image: ${AUTHENTIK_IMAGE}
+    container_name: authentik-server
+    command: server
+    restart: unless-stopped
+    environment:
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${PG_USER}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB}
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_LOG_LEVEL: info
+    ports:
+      - "${PORT}:9000"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - internal
+      - ${PROXY_NETWORK}
+
+  worker:
+    image: ${AUTHENTIK_IMAGE}
+    container_name: authentik-worker
+    command: worker
+    restart: unless-stopped
+    environment:
+      AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY}
+      AUTHENTIK_POSTGRESQL__HOST: postgresql
+      AUTHENTIK_POSTGRESQL__USER: ${PG_USER}
+      AUTHENTIK_POSTGRESQL__PASSWORD: ${PG_PASS}
+      AUTHENTIK_POSTGRESQL__NAME: ${PG_DB}
+      AUTHENTIK_REDIS__HOST: redis
+      AUTHENTIK_LOG_LEVEL: info
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - internal
+
+networks:
+  internal:
+  ${PROXY_NETWORK}:
+    external: true

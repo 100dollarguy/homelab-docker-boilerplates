@@ -1,0 +1,27 @@
+services:
+
+  n8n:
+    image: ${IMAGE}
+    container_name: ${CONTAINER_NAME}
+
+    restart: unless-stopped
+
+    ports:
+      - "${PORT}:5678"
+
+    environment:
+      - TZ=${TIMEZONE}
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - N8N_HOST=${N8N_HOST}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+
+    volumes:
+      - ./data:/home/node/.n8n
+
+    networks:
+      - ${NETWORK}
+
+networks:
+  ${NETWORK}:
+    external: true

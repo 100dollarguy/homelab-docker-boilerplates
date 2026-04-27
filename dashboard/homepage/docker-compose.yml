@@ -1,0 +1,20 @@
+services:
+
+  homepage:
+    image: ${IMAGE}
+    container_name: ${CONTAINER_NAME}
+
+    restart: unless-stopped
+
+    volumes:
+      - ./config:/app/config
+
+    ports:
+      - "${PORT}:3000"
+
+    networks:
+      - ${NETWORK}
+
+networks:
+  ${NETWORK}:
+    external: true
