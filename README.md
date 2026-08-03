@@ -1,5 +1,9 @@
 # 🐳 Homelab Docker Boilerplates
 
+![Docker](https://img.shields.io/badge/Docker-Compose-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+![Platform](https://img.shields.io/badge/Linux-macOS-Windows-blue)
+
 Production-ready, self-hosted Docker Compose stacks. Each stack is fully isolated, environment-variable driven, and deployable with a single command.
 
 Tested on **Ubuntu 24.04**. Compatible with any Linux distro, macOS, and Windows running Docker Desktop.
